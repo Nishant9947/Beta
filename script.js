@@ -1,75 +1,45 @@
-// Loader animation
-window.addEventListener('load', () => {
-    const loader = document.querySelector('.loader');
-    setTimeout(() => {
-        loader.classList.add('hidden');
-    }, 1000);
+// Improved Scroll to Top
+const scrollTop = document.querySelector('.scroll-top');
+
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+        scrollTop.classList.add('show');
+    } else {
+        scrollTop.classList.remove('show');
+    }
 });
 
-// Theme Toggle Logic
-const themeToggle = document.getElementById('theme-toggle');
-const body = document.body;
-const savedTheme = localStorage.getItem('theme') || 'light';
+scrollTop.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
 
+// Enhanced Project Card Animation
+const projectObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if(entry.isIntersecting) {
+            entry.target.style.animation = 
+                'fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards';
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.project-card').forEach(card => {
+    projectObserver.observe(card);
+});
+
+// Improved Theme Transition
 const setTheme = (theme) => {
+    document.documentElement.style.setProperty('--transition-time', '0.4s');
     body.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
-    themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-};
-
-setTheme(savedTheme);
-
-themeToggle.addEventListener('click', () => {
-    const currentTheme = body.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-});
-
-// Project cards
-document.addEventListener('DOMContentLoaded', () => {
-    const projectsContainer = document.getElementById('projects-container');
+    themeToggle.innerHTML = theme === 'dark' ? 
+        '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     
-    projects.forEach((project, index) => {
-        const projectCard = document.createElement('div');
-        projectCard.className = 'project-card';
-        projectCard.innerHTML = `
-            <img src="${project.image}" alt="${project.title}">
-            <div class="project-info">
-                <h3>${project.title}</h3>
-                <p>${project.description}</p>
-                <div class="tech-stack">
-                    ${project.tech.map(tech => `<span>${tech}</span>`).join('')}
-                </div>
-                <a href="${project.link}" target="_blank" class="project-link">
-                    <i class="fas fa-code"></i> View Source
-                </a>
-            </div>
-        `;
-        
-        projectCard.style.animationDelay = `${index * 0.2}s`;
-        projectsContainer.appendChild(projectCard);
-    });
-
-    // Animate project cards on scroll
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if(entry.isIntersecting) {
-                entry.target.style.animation = 'fadeInUp 0.5s ease forwards';
-            }
-        });
-    });
-
-    document.querySelectorAll('.project-card').forEach(card => {
-        observer.observe(card);
-    });
-});
-
-// Smooth scroll
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
-    });
-});
+    // Smooth transition for theme change
+    setTimeout(() => {
+        document.documentElement.style.setProperty('--transition-time', '0.2s');
+    }, 400);
+};
